@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .chart {
+      width: 400px;
+      height: 200px;
+      margin: 20px;
+    }
+    .table {
+      margin: 20px;
+    }
+    .textbox {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Real-time Data</h1>
+    <div class="dashboard">
+      <div class="chart">
+        <canvas id="chart"></canvas>
+      </div>
+      <div class="table">
+        <h2>Historical Data</h2>
+        <table id="table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Temperature</th>
+              <th>Humidity</th>
+              <th>Light Intensity</th>
+              <th>Air Quality</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+          </tbody>
+        </table>
+      </div>
+      <div class="textbox">
+        <h2>Entire Dataset</h2>
+        <textarea id="textbox" rows="10" cols="50"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let temperature = 0;
+    let humidity = 0;
+    let lightIntensity = 0;
+    let airQuality = 0;
+    let day = 1;
+    let data = [];
+
+    function generateRandomData() {
+      temperature = Math.random() * 100;
+      humidity = Math.random() * 100;
+      lightIntensity = Math.random() * 100;
+      airQuality = Math.random() * 100;
+      data.push({ temperature, humidity, lightIntensity, airQuality, day });
+      day++;
+    }
+
+    function updateChart() {
+      const ctx = document.getElementById('chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map((row) => row.day),
+          datasets: [{
+            label: 'Temperature',
+            data: data.map((row) => row.temperature),
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }, {
+            label: 'Humidity',
+            data: data.map((row) => row.humidity),
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }, {
+            label: 'Light Intensity',
+            data: data.map((row) => row.lightIntensity),
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 1
+          }, {
+            label: 'Air Quality',
+            data: data.map((row) => row.airQuality),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function updateTable() {
+      const tableBody = document.getElementById('table-body');
+      tableBody.innerHTML = '';
+      data.forEach((row) => {
+        const tableRow = document.createElement('tr');
+        tableRow.innerHTML = `
+          <td>${row.day}</td>
+          <td>${row.temperature.toFixed(2)}</td>
+          <td>${row.humidity.toFixed(2)}</td>
+          <td>${row.lightIntensity.toFixed(2)}</td>
+          <td>${row.airQuality.toFixed(2)}</td>
+        `;
+        tableBody.appendChild(tableRow);
+      });
+    }
+
+    function updateTextbox() {
